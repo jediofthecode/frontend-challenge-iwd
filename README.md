@@ -1,68 +1,123 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Personal Notes
 
-## Available Scripts
+This app was built to demonstrate how I would structure a react.js app with the intention of scaling.
+With the dataset and number of components that use it currently present, I opted out of using Redux,
+this can however be very easily added into the app
 
-In the project directory, you can run:
+## Directory Structure
 
-### `yarn start`
+I will highlight here the directory structure choices I made to clarify the layout of the project
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+└── src
+    ├── api              # classes used to make API requests
+    ├── components       # global components usable by any other scene/component
+    ├── scenes           # scenes, generally an entire page of the application
+    ├── styles           # global styles for the application
+    └── utils            # various utilities, provide minor isolated functionality
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The general layout rules are as follows when building scenes
 
-### `yarn test`
+```
+└── scenes
+    └── SceneName                         # parent folder for a scene
+        ├── components                    # components that are intended only for this scene
+        ├   └── ComponentName             # folder for a component
+        ├       ├── index.js              # the component file for easy importing
+        ├       └── ComponentName.test.js # unit test for an individual component
+        ├── index.js                      # the scene component for easy importing
+        └── SceneName.test.js             # the unit, or e2e test for the scene
+```
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# IWD frontend challenge
 
-### `yarn build`
+## Setup
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To avoid losing time, you will use a simple create-react-app bootstrap.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```bash
+cd frontend
+yarn global add create-react-app
+cd ..
+create-react-app frontend
+cp -r api frontend/public/
+cd frontend
+yarn start
+#This will open your browser to http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Guidelines
 
-### `yarn eject`
+We want to see your skills to design business code to produce **efficient** and **maintainable** code over time.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+DO
+* Do use good design
+* Follow reactjs best practices
+* Do maintainable design
+* Do use unit tests
+* Do use dependency management
+* Do use consistent code styles
+* Do use others dependencies if you want/need
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> Some candidates had some issues with momentjs and create-react-app, avoid it
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+DON'T DO
+* Do not loose time with build process, just use create-react-app `yarn start`
+* Do not use Docker, Vagrant... we must be able to run the app only with `yarn start`
+* Do not loose time with amazing CSS, be basic
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Domain
 
-## Learn More
+The app is supposed to display a list of surveys and the aggregated answers to
+those. A survey is composed of a name and a code. For a given survey, aggregated
+answers are available. There are 3 types of questions:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* QCM (multiple choice question)
+* Numeric
+* Date
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+For each type of question, the aggregated answers have a different format:
 
-### Code Splitting
+* QCM: the aggregated answers give the number of response for each available
+  QCM answer.
+* Numeric: the aggregated answers give the average of all answers
+* Date: the aggregated answers give the list of dates of all answers
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## Fake API
 
-### Analyzing the Bundle Size
+To simulate a REST like API, you copied the `api` folder into the
+`frontend/public/` directory so that the following resources should be
+available:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+* `http://localhost:3000/api/list.json` replies with the list of available
+  surveys
+* `http://localhost:3000/api/{code}.json` replies with the aggregated data
+  for the survey with the given code. For instance, `http://localhost:3000/api/XX2.json`
+  gives the aggregated answers for the survey with the code `XX2`.
 
-### Making a Progressive Web App
+## The Test
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+### Stage 1
 
-### Advanced Configuration
+Show a list of the surveys coming from the list endpoint.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+Result will be a simple list:
 
-### Deployment
+| Name  	|  Code	     |
+|---        |---	     |
+| Paris  	| XX1        |
+| Chartres  | XX2        |
+| Melun  	| XX3        |
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+### Stage 2
 
-### `yarn build` fails to minify
+The user can now click on a survey item. It will show the aggregate data of this survey.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+You can display the data the way you want, be creative (data visualization).
+
+### Stage 3 (bonus)
+
+> This is not mandatory, add this feature if you feel like it.
+
+Add a search input on the survey list to filter surveys by names and/or code.

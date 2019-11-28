@@ -1,0 +1,13 @@
+.SurveyCard {
+  cursor: pointer;
+}
+
+.SurveyCard:hover {
+  background:#f0f0f0;
+  transition: all 300ms ease;
+}
+
+.SurveyCard > a {
+  text-decoration: none;
+  color: black;
+}
